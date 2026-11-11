@@ -115,6 +115,26 @@ void BlurEffectConfig::setupSpinboxSliderSync() {
             if (ui.spinboxContrast->value() != value) ui.spinboxContrast->setValue(value); });
     connect(ui.spinboxContrast, &QSpinBox::valueChanged, this, [this](int value) {
             if (ui.kcfg_Contrast->value() != value) ui.kcfg_Contrast->setValue(value); });
+    // local fork: Glass tab + dock blur, same slider <-> spinbox sync
+    const std::pair<QSlider *, QSpinBox *> glassPairs[] = {
+        {ui.kcfg_DockBlurStrength, ui.spinboxDockBlurStrength},
+        {ui.kcfg_GlassIor, ui.spinboxGlassIor},
+        {ui.kcfg_GlassProfile, ui.spinboxGlassProfile},
+        {ui.kcfg_RimStrength, ui.spinboxRimStrength},
+        {ui.kcfg_RimWidth, ui.spinboxRimWidth},
+        {ui.kcfg_RimLightAngle, ui.spinboxRimLightAngle},
+        {ui.kcfg_RimDirectionality, ui.spinboxRimDirectionality},
+        {ui.kcfg_RimBackStrength, ui.spinboxRimBackStrength},
+        {ui.kcfg_InnerShade, ui.spinboxInnerShade},
+        {ui.kcfg_InnerShadeRadius, ui.spinboxInnerShadeRadius},
+    };
+    for (const auto &[slider, spinbox] : glassPairs) {
+        spinbox->setValue(slider->value());
+        connect(slider, &QSlider::valueChanged, this, [spinbox](int value) {
+                if (spinbox->value() != value) spinbox->setValue(value); });
+        connect(spinbox, &QSpinBox::valueChanged, this, [slider](int value) {
+                if (slider->value() != value) slider->setValue(value); });
+    }
 }
 
 void BlurEffectConfig::setupConstraints() {
@@ -147,7 +167,8 @@ void BlurEffectConfig::setupConstraints() {
 void BlurEffectConfig::slotRefractionModeChanged(int index) {
     // 1 = concave
     // TODO: make this an enum
-    const bool concave{index == 1};
+    // local fork: 2 = glass, which also uses the corner radius
+    const bool concave{index == 1 || index == 2};
 
     // Edge behaviour is not relevant for concave mode
     if (ui.kcfg_RefractionTextureRepeatMode) {

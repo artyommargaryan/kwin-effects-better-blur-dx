@@ -818,6 +818,503 @@
      </widget>
      <widget class="QWidget">
       <attribute name="title">
+       <string>Glass</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayoutGlass">
+       <item row="0" column="0">
+        <widget class="QLabel" name="labelDockBlurStrength">
+         <property name="text">
+          <string>Dock and panel blur strength:</string>
+         </property>
+         <property name="toolTip">
+          <string>Blur strength used for docks and panels only. 0 = same as the main blur strength.</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <layout class="QHBoxLayout" name="sliderBoxDockBlurStrength">
+         <item>
+          <widget class="QSlider" name="kcfg_DockBlurStrength">
+           <property name="toolTip">
+            <string>Blur strength used for docks and panels only. 0 = same as the main blur strength.</string>
+           </property>
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <number>15</number>
+           </property>
+           <property name="singleStep">
+            <number>1</number>
+           </property>
+           <property name="pageStep">
+            <number>1</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinboxDockBlurStrength">
+           <property name="suffix">
+            <string></string>
+           </property>
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <number>15</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="labelGlassIor">
+         <property name="text">
+          <string>Glass density:</string>
+         </property>
+         <property name="toolTip">
+          <string>Index of refraction x100 for the Glass refraction mode. 150 = window glass.</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <layout class="QHBoxLayout" name="sliderBoxGlassIor">
+         <item>
+          <widget class="QSlider" name="kcfg_GlassIor">
+           <property name="toolTip">
+            <string>Index of refraction x100 for the Glass refraction mode. 150 = window glass.</string>
+           </property>
+           <property name="minimum">
+            <number>101</number>
+           </property>
+           <property name="maximum">
+            <number>300</number>
+           </property>
+           <property name="singleStep">
+            <number>10</number>
+           </property>
+           <property name="pageStep">
+            <number>10</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinboxGlassIor">
+           <property name="suffix">
+            <string></string>
+           </property>
+           <property name="minimum">
+            <number>101</number>
+           </property>
+           <property name="maximum">
+            <number>300</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="labelGlassProfile">
+         <property name="text">
+          <string>Bezel shape:</string>
+         </property>
+         <property name="toolTip">
+          <string>Shape of the glass edge in Glass mode. Low = round bevel, high = flat face with a sharp edge.</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <layout class="QHBoxLayout" name="sliderBoxGlassProfile">
+         <item>
+          <widget class="QSlider" name="kcfg_GlassProfile">
+           <property name="toolTip">
+            <string>Shape of the glass edge in Glass mode. Low = round bevel, high = flat face with a sharp edge.</string>
+           </property>
+           <property name="minimum">
+            <number>2</number>
+           </property>
+           <property name="maximum">
+            <number>16</number>
+           </property>
+           <property name="singleStep">
+            <number>1</number>
+           </property>
+           <property name="pageStep">
+            <number>1</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinboxGlassProfile">
+           <property name="suffix">
+            <string></string>
+           </property>
+           <property name="minimum">
+            <number>2</number>
+           </property>
+           <property name="maximum">
+            <number>16</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="labelRimStrength">
+         <property name="text">
+          <string>Rim light strength:</string>
+         </property>
+         <property name="toolTip">
+          <string>Brightness of the thin light line on the edges facing the light. 0 = off.</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <layout class="QHBoxLayout" name="sliderBoxRimStrength">
+         <item>
+          <widget class="QSlider" name="kcfg_RimStrength">
+           <property name="toolTip">
+            <string>Brightness of the thin light line on the edges facing the light. 0 = off.</string>
+           </property>
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <number>400</number>
+           </property>
+           <property name="singleStep">
+            <number>10</number>
+           </property>
+           <property name="pageStep">
+            <number>10</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinboxRimStrength">
+           <property name="suffix">
+            <string> %</string>
+           </property>
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <number>400</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="labelRimWidth">
+         <property name="text">
+          <string>Rim light width:</string>
+         </property>
+         <property name="toolTip">
+          <string>Width of the rim light in tenths of a pixel (15 = 1.5 px).</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <layout class="QHBoxLayout" name="sliderBoxRimWidth">
+         <item>
+          <widget class="QSlider" name="kcfg_RimWidth">
+           <property name="toolTip">
+            <string>Width of the rim light in tenths of a pixel (15 = 1.5 px).</string>
+           </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>100</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="pageStep">
+            <number>5</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinboxRimWidth">
+           <property name="suffix">
+            <string></string>
+           </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>100</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="labelRimLightAngle">
+         <property name="text">
+          <string>Light direction:</string>
+         </property>
+         <property name="toolTip">
+          <string>Where the light comes from: 0 = right, 90 = below, 180 = left, 270 = above. 225 = top-left.</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <layout class="QHBoxLayout" name="sliderBoxRimLightAngle">
+         <item>
+          <widget class="QSlider" name="kcfg_RimLightAngle">
+           <property name="toolTip">
+            <string>Where the light comes from: 0 = right, 90 = below, 180 = left, 270 = above. 225 = top-left.</string>
+           </property>
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <number>359</number>
+           </property>
+           <property name="singleStep">
+            <number>15</number>
+           </property>
+           <property name="pageStep">
+            <number>15</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinboxRimLightAngle">
+           <property name="suffix">
+            <string> °</string>
+           </property>
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <number>359</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="labelRimDirectionality">
+         <property name="text">
+          <string>Rim light focus:</string>
+         </property>
+         <property name="toolTip">
+          <string>How tightly the rim light is limited to edges facing the light (tenths).</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <layout class="QHBoxLayout" name="sliderBoxRimDirectionality">
+         <item>
+          <widget class="QSlider" name="kcfg_RimDirectionality">
+           <property name="toolTip">
+            <string>How tightly the rim light is limited to edges facing the light (tenths).</string>
+           </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>100</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="pageStep">
+            <number>5</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinboxRimDirectionality">
+           <property name="suffix">
+            <string></string>
+           </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>100</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="7" column="0">
+        <widget class="QLabel" name="labelRimBackStrength">
+         <property name="text">
+          <string>Opposite-edge reflection:</string>
+         </property>
+         <property name="toolTip">
+          <string>Strength of the weaker reflection on the edges facing away from the light.</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1">
+        <layout class="QHBoxLayout" name="sliderBoxRimBackStrength">
+         <item>
+          <widget class="QSlider" name="kcfg_RimBackStrength">
+           <property name="toolTip">
+            <string>Strength of the weaker reflection on the edges facing away from the light.</string>
+           </property>
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <number>100</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="pageStep">
+            <number>5</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinboxRimBackStrength">
+           <property name="suffix">
+            <string> %</string>
+           </property>
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <number>100</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="labelInnerShade">
+         <property name="text">
+          <string>Inner shade strength:</string>
+         </property>
+         <property name="toolTip">
+          <string>Soft dark band inside the edges the light does not reach. 0 = off.</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="1">
+        <layout class="QHBoxLayout" name="sliderBoxInnerShade">
+         <item>
+          <widget class="QSlider" name="kcfg_InnerShade">
+           <property name="toolTip">
+            <string>Soft dark band inside the edges the light does not reach. 0 = off.</string>
+           </property>
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <number>100</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="pageStep">
+            <number>5</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinboxInnerShade">
+           <property name="suffix">
+            <string> %</string>
+           </property>
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <number>100</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="9" column="0">
+        <widget class="QLabel" name="labelInnerShadeRadius">
+         <property name="text">
+          <string>Inner shade width:</string>
+         </property>
+         <property name="toolTip">
+          <string>Width of the inner shade band.</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="1">
+        <layout class="QHBoxLayout" name="sliderBoxInnerShadeRadius">
+         <item>
+          <widget class="QSlider" name="kcfg_InnerShadeRadius">
+           <property name="toolTip">
+            <string>Width of the inner shade band.</string>
+           </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>60</number>
+           </property>
+           <property name="singleStep">
+            <number>1</number>
+           </property>
+           <property name="pageStep">
+            <number>1</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinboxInnerShadeRadius">
+           <property name="suffix">
+            <string> px</string>
+           </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>60</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget">
+      <attribute name="title">
        <string>Performance</string>
       </attribute>
       <layout class="QFormLayout" name="formLayoutPerformance">
