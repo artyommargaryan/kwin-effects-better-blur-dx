@@ -75,6 +75,14 @@ class3</default>
             <default>0</default>
         </entry>
         <!-- Glass (lens mode + lighting); sliders on the Glass tab of the settings page -->
+        <!-- exact corner radii in px for the Glass mode lens/rim; 0 = fall back
+             (GlassCornerRadius -> snapped RefractionCornerRadius, DockCornerRadius -> glass value) -->
+        <entry name="GlassCornerRadius" type="Int">
+            <default>0</default>
+        </entry>
+        <entry name="DockCornerRadius" type="Int">
+            <default>0</default>
+        </entry>
         <entry name="GlassIor" type="Int">
             <default>150</default>
         </entry>

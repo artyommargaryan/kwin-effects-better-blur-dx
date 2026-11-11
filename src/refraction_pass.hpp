@@ -30,6 +30,7 @@ private:
     int m_refractionModeLocation;
 
     // glass parameters (lens mode + lighting)
+    int m_glassCornerMaskLocation;
     int m_glassIorLocation;
     int m_glassProfileLocation;
     int m_glassRimStrengthLocation;
@@ -47,6 +48,9 @@ private:
     qreal m_strength{};
     qreal m_edgeSizePixels{};
     qreal m_cornerRadiusPixels{};
+    // local fork: exact glass-mode radii (px); <= 0 means "not set"
+    qreal m_glassCornerRadiusPixels{};
+    qreal m_dockCornerRadiusPixels{};
     qreal m_RGBFringing{};
     int m_textureRepeatMode{};
     int m_mode{};
@@ -95,7 +99,9 @@ public:
                        const QMatrix4x4 &colorMatrix,
                        const QVector2D &halfpixel,
                        const float offset,
-                       const QRect &scaledBackgroundRect) const;
+                       const QRect &scaledBackgroundRect,
+                       const bool isDock = false,
+                       const QVector4D &cornerMask = QVector4D(1.0f, 1.0f, 1.0f, 1.0f)) const;
 };
 
 } // namespace BBDX

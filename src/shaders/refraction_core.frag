@@ -16,6 +16,7 @@ uniform int refractionMode; // 0: Basic, 1: Concave, 2: Glass (Snell's law)
 
 // Glass: lens profile (mode 2) and lighting (all modes)
 uniform float glassIor;                    // index of refraction, ~1.5
+uniform vec4 glassCornerMask;              // 1 = rounded, 0 = square; (top-left, top-right, bottom-left, bottom-right)
 uniform float glassProfile;                // superellipse exponent of the bezel cross-section
 uniform float glassRimStrength;            // 0 disables the rim light
 uniform float glassRimWidthPixels;
@@ -112,6 +113,11 @@ void main(void)
     vec2 halfRefractionRectSize = 0.5 * refractionRectSize;
     vec2 position = uv * refractionRectSize - halfRefractionRectSize.xy;
     float cornerR = min(refractionCornerRadiusPixels, min(halfRefractionRectSize.x, halfRefractionRectSize.y));
+    // per-corner: Plasma popups that touch a screen edge or a panel have square corners there
+    // (uv.y = 1 is the top edge)
+    cornerR *= position.y > 0.0
+        ? (position.x < 0.0 ? glassCornerMask.x : glassCornerMask.y)
+        : (position.x < 0.0 ? glassCornerMask.z : glassCornerMask.w);
     float distConcave = roundedRectangleDist(position, halfRefractionRectSize, cornerR);
     float distBulge = roundedRectangleDist(position, halfRefractionRectSize, refractionEdgeSizePixels);
 

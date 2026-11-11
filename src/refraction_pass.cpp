@@ -51,6 +51,7 @@ std::unique_ptr<BBDX::RefractionPass> BBDX::RefractionPass::create() {
         pass->m_glassIorLocation = pass->m_shader->uniformLocation("glassIor");
         pass->m_glassProfileLocation = pass->m_shader->uniformLocation("glassProfile");
         pass->m_glassRimStrengthLocation = pass->m_shader->uniformLocation("glassRimStrength");
+        pass->m_glassCornerMaskLocation = pass->m_shader->uniformLocation("glassCornerMask");
         pass->m_glassRimWidthPixelsLocation = pass->m_shader->uniformLocation("glassRimWidthPixels");
         pass->m_glassLightDirLocation = pass->m_shader->uniformLocation("glassLightDir");
         pass->m_glassRimDirectionalityLocation = pass->m_shader->uniformLocation("glassRimDirectionality");
@@ -84,6 +85,8 @@ void BBDX::RefractionPass::reconfigure() {
     constexpr double stepSize{maxCornerRadiusPixels / steps}; // ~6.6667, matching step size from blur_config.ui
     const double snapped{std::round(static_cast<double>(config->refractionCornerRadius()) / stepSize) * stepSize};
     m_cornerRadiusPixels = snapped;
+    m_glassCornerRadiusPixels = static_cast<double>(config->glassCornerRadius());
+    m_dockCornerRadiusPixels = static_cast<double>(config->dockCornerRadius());
 
     // expects range 0.0-1.0
     // max value from blur_config.ui
@@ -133,7 +136,9 @@ bool BBDX::RefractionPass::setParameters(const QMatrix4x4 &projectionMatrix,
                                          const QMatrix4x4 &colorMatrix,
                                          const QVector2D &halfpixel,
                                          const float offset,
-                                         const QRect &scaledBackgroundRect) const {
+                                         const QRect &scaledBackgroundRect,
+                                         const bool isDock,
+                                         const QVector4D &cornerMask) const {
     if (!enabled())
         return false;
 
@@ -149,7 +154,16 @@ bool BBDX::RefractionPass::setParameters(const QMatrix4x4 &projectionMatrix,
                                      std::min(static_cast<float>(m_edgeSizePixels),
                                               static_cast<float>(std::min(scaledBackgroundRect.width() / 2,
                                                                           scaledBackgroundRect.height() / 2))));
-    m_shader->setUniform(m_refractionCornerRadiusPixelsLocation, static_cast<float>(m_cornerRadiusPixels));
+    // local fork: glass mode can use exact radii, separately for docks/panels
+    double cornerRadiusPixels{m_cornerRadiusPixels};
+    if (m_mode == 2) {
+        if (m_glassCornerRadiusPixels > 0.0)
+            cornerRadiusPixels = m_glassCornerRadiusPixels;
+        if (isDock && m_dockCornerRadiusPixels > 0.0)
+            cornerRadiusPixels = m_dockCornerRadiusPixels;
+    }
+    m_shader->setUniform(m_refractionCornerRadiusPixelsLocation, static_cast<float>(cornerRadiusPixels));
+    m_shader->setUniform(m_glassCornerMaskLocation, cornerMask);
     m_shader->setUniform(m_refractionStrengthLocation, static_cast<float>(m_strength));
     m_shader->setUniform(m_refractionNormalPowLocation, static_cast<float>(m_normalPow));
     m_shader->setUniform(m_refractionRGBFringingLocation, static_cast<float>(m_RGBFringing));

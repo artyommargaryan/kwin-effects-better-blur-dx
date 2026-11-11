@@ -1311,6 +1311,104 @@
          </item>
         </layout>
        </item>
+       <item row="10" column="0">
+        <widget class="QLabel" name="labelGlassCornerRadius">
+         <property name="text">
+          <string>Glass corner radius:</string>
+         </property>
+         <property name="toolTip">
+          <string>Exact corner radius of the lens and rim in Glass mode, for popups and windows. 0 = use the Refraction tab value.</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="1">
+        <layout class="QHBoxLayout" name="sliderBoxGlassCornerRadius">
+         <item>
+          <widget class="QSlider" name="kcfg_GlassCornerRadius">
+           <property name="toolTip">
+            <string>Exact corner radius of the lens and rim in Glass mode, for popups and windows. 0 = use the Refraction tab value.</string>
+           </property>
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <number>60</number>
+           </property>
+           <property name="singleStep">
+            <number>1</number>
+           </property>
+           <property name="pageStep">
+            <number>1</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinboxGlassCornerRadius">
+           <property name="suffix">
+            <string> px</string>
+           </property>
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <number>60</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="11" column="0">
+        <widget class="QLabel" name="labelDockCornerRadius">
+         <property name="text">
+          <string>Dock and panel corner radius:</string>
+         </property>
+         <property name="toolTip">
+          <string>Exact corner radius of the lens and rim for docks and panels in Glass mode. 0 = same as the glass corner radius.</string>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="1">
+        <layout class="QHBoxLayout" name="sliderBoxDockCornerRadius">
+         <item>
+          <widget class="QSlider" name="kcfg_DockCornerRadius">
+           <property name="toolTip">
+            <string>Exact corner radius of the lens and rim for docks and panels in Glass mode. 0 = same as the glass corner radius.</string>
+           </property>
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <number>60</number>
+           </property>
+           <property name="singleStep">
+            <number>1</number>
+           </property>
+           <property name="pageStep">
+            <number>1</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinboxDockCornerRadius">
+           <property name="suffix">
+            <string> px</string>
+           </property>
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <number>60</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget">

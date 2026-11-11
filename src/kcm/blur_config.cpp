@@ -127,6 +127,8 @@ void BlurEffectConfig::setupSpinboxSliderSync() {
         {ui.kcfg_RimBackStrength, ui.spinboxRimBackStrength},
         {ui.kcfg_InnerShade, ui.spinboxInnerShade},
         {ui.kcfg_InnerShadeRadius, ui.spinboxInnerShadeRadius},
+        {ui.kcfg_GlassCornerRadius, ui.spinboxGlassCornerRadius},
+        {ui.kcfg_DockCornerRadius, ui.spinboxDockCornerRadius},
     };
     for (const auto &[slider, spinbox] : glassPairs) {
         spinbox->setValue(slider->value());

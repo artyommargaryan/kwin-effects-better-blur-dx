@@ -982,6 +982,24 @@ void BlurEffect::blur(const RenderTarget &renderTarget, const RenderViewport &vi
 #endif
     const auto opacity = m_windowManager->getEffectiveBlurOpacity(w, data);
 
+    // local fork: which corners of the blur shape are actually rounded?
+    // A corner whose outermost pixel is part of the shape is square (Plasma popups
+    // drop their rounded border where they touch a screen edge or a panel).
+    // Windows rounded by this effect itself keep all four corners.
+    QVector4D glassCornerMask(1.0f, 1.0f, 1.0f, 1.0f);
+#if KWIN_VERSION >= KWIN_VERSION_CODE(6, 6, 90)
+    if (m_windowManager->getEffectiveBorderRadius(w).isNull()) {
+        const qreal l = backgroundRect.x() + 0.5;
+        const qreal t = backgroundRect.y() + 0.5;
+        const qreal r = backgroundRect.x() + backgroundRect.width() - 0.5;
+        const qreal b = backgroundRect.y() + backgroundRect.height() - 0.5;
+        glassCornerMask = QVector4D(blurShape.contains(QPointF(l, t)) ? 0.0f : 1.0f,
+                                    blurShape.contains(QPointF(r, t)) ? 0.0f : 1.0f,
+                                    blurShape.contains(QPointF(l, b)) ? 0.0f : 1.0f,
+                                    blurShape.contains(QPointF(r, b)) ? 0.0f : 1.0f);
+    }
+#endif
+
     // local fork: per-window blur strength
     const size_t iterationCount = w->isDock() ? m_dockIterationCount : m_iterationCount;
     const int blurOffset = w->isDock() ? m_dockOffset : m_offset;
@@ -1337,7 +1355,9 @@ void BlurEffect::blur(const RenderTarget &renderTarget, const RenderViewport &vi
                                              colorMatrix,
                                              halfpixel,
                                              float(blurOffset),
-                                             backgroundRect)) {
+                                             backgroundRect,
+                                             w->isDock(),
+                                             glassCornerMask)) {
         m_onscreenPass.shader->setUniform(m_onscreenPass.mvpMatrixLocation, projectionMatrix);
         m_onscreenPass.shader->setUniform(m_onscreenPass.colorMatrixLocation, colorMatrix);
         m_onscreenPass.shader->setUniform(m_onscreenPass.halfpixelLocation, halfpixel);
