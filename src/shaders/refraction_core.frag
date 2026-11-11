@@ -16,7 +16,7 @@ uniform int refractionMode; // 0: Basic, 1: Concave, 2: Glass (Snell's law)
 
 // Glass: lens profile (mode 2) and lighting (all modes)
 uniform float glassIor;                    // index of refraction, ~1.5
-uniform vec4 glassCornerMask;              // 1 = rounded, 0 = square; (top-left, top-right, bottom-left, bottom-right)
+uniform vec4 glassCornerMask;              // per-corner scale of the radius, 0 = square; (top-left, top-right, bottom-left, bottom-right)
 uniform float glassLumaCeiling;            // >= 1.0 disables adaptive dimming
 uniform float glassProfile;                // superellipse exponent of the bezel cross-section
 uniform float glassRimStrength;            // 0 disables the rim light

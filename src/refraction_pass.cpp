@@ -140,7 +140,7 @@ bool BBDX::RefractionPass::setParameters(const QMatrix4x4 &projectionMatrix,
                                          const float offset,
                                          const QRect &scaledBackgroundRect,
                                          const bool isDock,
-                                         const QVector4D &cornerMask) const {
+                                         const QVector4D &measuredCornerRadii) const {
     if (!enabled())
         return false;
 
@@ -156,7 +156,10 @@ bool BBDX::RefractionPass::setParameters(const QMatrix4x4 &projectionMatrix,
                                      std::min(static_cast<float>(m_edgeSizePixels),
                                               static_cast<float>(std::min(scaledBackgroundRect.width() / 2,
                                                                           scaledBackgroundRect.height() / 2))));
-    // local fork: glass mode can use exact radii, separately for docks/panels
+    // local fork: per-corner radii.
+    // Glass mode: the configured radius (glass / dock) is used for corners whose measured
+    // radius is close to it; corners that measure clearly different (tooltips, menus, other
+    // themes) use their own measurement, and corners measured as square stay square.
     double cornerRadiusPixels{m_cornerRadiusPixels};
     if (m_mode == 2) {
         if (m_glassCornerRadiusPixels > 0.0)
@@ -164,8 +167,26 @@ bool BBDX::RefractionPass::setParameters(const QMatrix4x4 &projectionMatrix,
         if (isDock && m_dockCornerRadiusPixels > 0.0)
             cornerRadiusPixels = m_dockCornerRadiusPixels;
     }
-    m_shader->setUniform(m_refractionCornerRadiusPixelsLocation, static_cast<float>(cornerRadiusPixels));
-    m_shader->setUniform(m_glassCornerMaskLocation, cornerMask);
+    float radii[4];
+    float largest = 0.0f;
+    for (int i = 0; i < 4; ++i) {
+        const float measured = measuredCornerRadii[i];
+        float radius = static_cast<float>(cornerRadiusPixels);
+        if (measured == 0.0f) {
+            radius = 0.0f;
+        } else if (measured > 0.0f && m_mode == 2
+                   && std::abs(measured - radius) > 0.35f * std::max(radius, 1.0f)) {
+            radius = measured;
+        }
+        radii[i] = radius;
+        largest = std::max(largest, radius);
+    }
+    // the shader takes one radius plus a per-corner scale
+    const QVector4D cornerScale = largest > 0.0f
+        ? QVector4D(radii[0] / largest, radii[1] / largest, radii[2] / largest, radii[3] / largest)
+        : QVector4D(0.0f, 0.0f, 0.0f, 0.0f);
+    m_shader->setUniform(m_refractionCornerRadiusPixelsLocation, largest);
+    m_shader->setUniform(m_glassCornerMaskLocation, cornerScale);
     m_shader->setUniform(m_glassLumaCeilingLocation, static_cast<float>(m_glassLumaCeiling));
     m_shader->setUniform(m_refractionStrengthLocation, static_cast<float>(m_strength));
     m_shader->setUniform(m_refractionNormalPowLocation, static_cast<float>(m_normalPow));

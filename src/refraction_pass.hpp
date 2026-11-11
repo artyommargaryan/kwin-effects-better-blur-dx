@@ -103,7 +103,7 @@ public:
                        const float offset,
                        const QRect &scaledBackgroundRect,
                        const bool isDock = false,
-                       const QVector4D &cornerMask = QVector4D(1.0f, 1.0f, 1.0f, 1.0f)) const;
+                       const QVector4D &measuredCornerRadii = QVector4D(-1.0f, -1.0f, -1.0f, -1.0f)) const;
 };
 
 } // namespace BBDX
