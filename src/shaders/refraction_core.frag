@@ -17,6 +17,7 @@ uniform int refractionMode; // 0: Basic, 1: Concave, 2: Glass (Snell's law)
 // Glass: lens profile (mode 2) and lighting (all modes)
 uniform float glassIor;                    // index of refraction, ~1.5
 uniform vec4 glassCornerMask;              // 1 = rounded, 0 = square; (top-left, top-right, bottom-left, bottom-right)
+uniform float glassLumaCeiling;            // >= 1.0 disables adaptive dimming
 uniform float glassProfile;                // superellipse exponent of the bezel cross-section
 uniform float glassRimStrength;            // 0 disables the rim light
 uniform float glassRimWidthPixels;
@@ -226,6 +227,19 @@ void main(void)
     }
 
     vec4 color = sum * colorMatrix;
+
+    // Adaptive dimming: keep dark and mid-tone backdrops as they are, but roll bright
+    // ones off towards a ceiling so light text stays readable over white windows.
+    if (glassLumaCeiling < 1.0 && color.a > 0.0) {
+        vec3 rgb = color.rgb / color.a;
+        float luma = dot(rgb, vec3(0.2126, 0.7152, 0.0722));
+        float knee = glassLumaCeiling * 0.55;
+        if (luma > knee) {
+            float range = max(glassLumaCeiling - knee, 0.001);
+            float target = knee + range * (1.0 - exp(-(luma - knee) / range));
+            color.rgb *= target / luma;
+        }
+    }
 
     // Lighting: a thin rim lit from glassLightDir with a weaker reflection on the
     // far side, plus a soft shade just inside the edges the light does not reach.

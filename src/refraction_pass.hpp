@@ -31,6 +31,7 @@ private:
 
     // glass parameters (lens mode + lighting)
     int m_glassCornerMaskLocation;
+    int m_glassLumaCeilingLocation;
     int m_glassIorLocation;
     int m_glassProfileLocation;
     int m_glassRimStrengthLocation;
@@ -49,6 +50,7 @@ private:
     qreal m_edgeSizePixels{};
     qreal m_cornerRadiusPixels{};
     // local fork: exact glass-mode radii (px); <= 0 means "not set"
+    qreal m_glassLumaCeiling{1.0};
     qreal m_glassCornerRadiusPixels{};
     qreal m_dockCornerRadiusPixels{};
     qreal m_RGBFringing{};

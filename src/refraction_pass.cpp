@@ -52,6 +52,7 @@ std::unique_ptr<BBDX::RefractionPass> BBDX::RefractionPass::create() {
         pass->m_glassProfileLocation = pass->m_shader->uniformLocation("glassProfile");
         pass->m_glassRimStrengthLocation = pass->m_shader->uniformLocation("glassRimStrength");
         pass->m_glassCornerMaskLocation = pass->m_shader->uniformLocation("glassCornerMask");
+        pass->m_glassLumaCeilingLocation = pass->m_shader->uniformLocation("glassLumaCeiling");
         pass->m_glassRimWidthPixelsLocation = pass->m_shader->uniformLocation("glassRimWidthPixels");
         pass->m_glassLightDirLocation = pass->m_shader->uniformLocation("glassLightDir");
         pass->m_glassRimDirectionalityLocation = pass->m_shader->uniformLocation("glassRimDirectionality");
@@ -85,6 +86,7 @@ void BBDX::RefractionPass::reconfigure() {
     constexpr double stepSize{maxCornerRadiusPixels / steps}; // ~6.6667, matching step size from blur_config.ui
     const double snapped{std::round(static_cast<double>(config->refractionCornerRadius()) / stepSize) * stepSize};
     m_cornerRadiusPixels = snapped;
+    m_glassLumaCeiling = std::clamp(static_cast<double>(config->glassLumaCeiling()) / 100.0, 0.05, 1.0);
     m_glassCornerRadiusPixels = static_cast<double>(config->glassCornerRadius());
     m_dockCornerRadiusPixels = static_cast<double>(config->dockCornerRadius());
 
@@ -164,6 +166,7 @@ bool BBDX::RefractionPass::setParameters(const QMatrix4x4 &projectionMatrix,
     }
     m_shader->setUniform(m_refractionCornerRadiusPixelsLocation, static_cast<float>(cornerRadiusPixels));
     m_shader->setUniform(m_glassCornerMaskLocation, cornerMask);
+    m_shader->setUniform(m_glassLumaCeilingLocation, static_cast<float>(m_glassLumaCeiling));
     m_shader->setUniform(m_refractionStrengthLocation, static_cast<float>(m_strength));
     m_shader->setUniform(m_refractionNormalPowLocation, static_cast<float>(m_normalPow));
     m_shader->setUniform(m_refractionRGBFringingLocation, static_cast<float>(m_RGBFringing));

@@ -83,6 +83,11 @@ class3</default>
         <entry name="DockCornerRadius" type="Int">
             <default>0</default>
         </entry>
+        <!-- adaptive dimming: backdrop luminance above the knee is compressed towards this
+             ceiling (percent), darker areas are left alone. 100 = off -->
+        <entry name="GlassLumaCeiling" type="Int">
+            <default>100</default>
+        </entry>
         <entry name="GlassIor" type="Int">
             <default>150</default>
         </entry>

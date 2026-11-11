@@ -1409,6 +1409,55 @@
          </item>
         </layout>
        </item>
+       <item row="12" column="0">
+        <widget class="QLabel" name="labelGlassLumaCeiling">
+         <property name="text">
+          <string>Bright background limit:</string>
+         </property>
+         <property name="toolTip">
+          <string>Adaptive dimming: bright areas behind the glass are toned down to this brightness so light text stays readable; dark and colourful areas are left alone. 100 = off.</string>
+         </property>
+        </widget>
+       </item>
+       <item row="12" column="1">
+        <layout class="QHBoxLayout" name="sliderBoxGlassLumaCeiling">
+         <item>
+          <widget class="QSlider" name="kcfg_GlassLumaCeiling">
+           <property name="toolTip">
+            <string>Adaptive dimming: bright areas behind the glass are toned down to this brightness so light text stays readable; dark and colourful areas are left alone. 100 = off.</string>
+           </property>
+           <property name="minimum">
+            <number>10</number>
+           </property>
+           <property name="maximum">
+            <number>100</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="pageStep">
+            <number>5</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinboxGlassLumaCeiling">
+           <property name="suffix">
+            <string> %</string>
+           </property>
+           <property name="minimum">
+            <number>10</number>
+           </property>
+           <property name="maximum">
+            <number>100</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget">
