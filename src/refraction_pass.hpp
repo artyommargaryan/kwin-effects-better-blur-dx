@@ -29,6 +29,17 @@ private:
     int m_refractionTextureRepeatModeLocation;
     int m_refractionModeLocation;
 
+    // glass parameters (lens mode + lighting)
+    int m_glassIorLocation;
+    int m_glassProfileLocation;
+    int m_glassRimStrengthLocation;
+    int m_glassRimWidthPixelsLocation;
+    int m_glassLightDirLocation;
+    int m_glassRimDirectionalityLocation;
+    int m_glassRimBackStrengthLocation;
+    int m_glassInnerShadeLocation;
+    int m_glassInnerShadeRadiusPixelsLocation;
+
     bool m_enabled{false};
 
     // user settings
@@ -39,6 +50,16 @@ private:
     qreal m_RGBFringing{};
     int m_textureRepeatMode{};
     int m_mode{};
+
+    qreal m_glassIor{1.5};
+    qreal m_glassProfile{4.0};
+    qreal m_rimStrength{};
+    qreal m_rimWidthPixels{1.5};
+    QVector2D m_lightDir{-0.7071f, -0.7071f};
+    qreal m_rimDirectionality{1.5};
+    qreal m_rimBackStrength{0.45};
+    qreal m_innerShade{};
+    qreal m_innerShadeRadiusPixels{12.0};
 
     RefractionPass() = default;
 

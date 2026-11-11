@@ -362,10 +362,17 @@ void BlurEffect::reconfigure(ReconfigureFlags flags)
     m_blurCache->reconfigure();
     m_forceContrastParams = BlurConfig::forceContrastParams();
 
-    int blurStrength = BlurConfig::blurStrength() - 1;
+    const int maxStrength = static_cast<int>(blurStrengthValues.size());
+    int blurStrength = std::clamp(BlurConfig::blurStrength(), 1, maxStrength) - 1;
     m_iterationCount = blurStrengthValues[blurStrength].iteration;
     m_offset = blurStrengthValues[blurStrength].offset;
-    m_expandSize = blurOffsets[m_iterationCount - 1].expandSize;
+    // local fork: docks/panels may use their own strength (0 = same as everything else)
+    int dockStrength = BlurConfig::dockBlurStrength();
+    dockStrength = dockStrength <= 0 ? blurStrength : std::clamp(dockStrength, 1, maxStrength) - 1;
+    m_dockIterationCount = blurStrengthValues[dockStrength].iteration;
+    m_dockOffset = blurStrengthValues[dockStrength].offset;
+    // repaint expansion must cover the stronger of the two
+    m_expandSize = blurOffsets[std::max(m_iterationCount, m_dockIterationCount) - 1].expandSize;
     m_noiseStrength = BlurConfig::noiseStrength();
     m_colorMatrix = colorTransformMatrix(BlurConfig::saturation() / 100.0,
                                          BlurConfig::contrast() / 100.0,
@@ -975,6 +982,10 @@ void BlurEffect::blur(const RenderTarget &renderTarget, const RenderViewport &vi
 #endif
     const auto opacity = m_windowManager->getEffectiveBlurOpacity(w, data);
 
+    // local fork: per-window blur strength
+    const size_t iterationCount = w->isDock() ? m_dockIterationCount : m_iterationCount;
+    const int blurOffset = w->isDock() ? m_dockOffset : m_offset;
+
     // Get the effective shape that will be actually blurred. It's possible that all of it will be clipped.
     QList<RectF> effectiveShape;
 #if KWIN_VERSION < KWIN_VERSION_CODE(6, 5, 80)
@@ -1024,7 +1035,7 @@ void BlurEffect::blur(const RenderTarget &renderTarget, const RenderViewport &vi
         textureFormat = renderTarget.texture()->internalFormat();
     }
 
-    if (renderInfo.framebuffers.size() != (m_iterationCount + 1) || renderInfo.textures[0]->size() != backgroundRect.size() || renderInfo.textures[0]->internalFormat() != textureFormat) {
+    if (renderInfo.framebuffers.size() != (iterationCount + 1) || renderInfo.textures[0]->size() != backgroundRect.size() || renderInfo.textures[0]->internalFormat() != textureFormat) {
         renderInfo.framebuffers.clear();
         renderInfo.textures.clear();
         // BBDX:
@@ -1037,7 +1048,7 @@ void BlurEffect::blur(const RenderTarget &renderTarget, const RenderViewport &vi
         // instead of transparent to avoid artifacts when dragging
         // windows across screen borders
         glClearColor(0.0, 0.0, 0.0, 1.0);
-        for (size_t i = 0; i <= m_iterationCount; ++i) {
+        for (size_t i = 0; i <= iterationCount; ++i) {
             auto texture = GLTexture::allocate(textureFormat, BBDX::getTextureSize(backgroundRect, i));
             if (!texture) {
                 qCWarning(KWIN_BLUR) << BBDX::LOG_PREFIX << "Failed to allocate an offscreen texture";
@@ -1207,7 +1218,7 @@ void BlurEffect::blur(const RenderTarget &renderTarget, const RenderViewport &vi
         projectionMatrix.ortho(QRectF(0.0, 0.0, backgroundRect.width(), backgroundRect.height()));
 
         m_downsamplePass.shader->setUniform(m_downsamplePass.mvpMatrixLocation, projectionMatrix);
-        m_downsamplePass.shader->setUniform(m_downsamplePass.offsetLocation, float(m_offset));
+        m_downsamplePass.shader->setUniform(m_downsamplePass.offsetLocation, float(blurOffset));
 
         for (size_t i = 1; i < renderInfo.framebuffers.size(); ++i) {
             // BBDX: read the blit from cache entry
@@ -1237,7 +1248,7 @@ void BlurEffect::blur(const RenderTarget &renderTarget, const RenderViewport &vi
         projectionMatrix.ortho(QRectF(0.0, 0.0, backgroundRect.width(), backgroundRect.height()));
 
         m_upsamplePass.shader->setUniform(m_upsamplePass.mvpMatrixLocation, projectionMatrix);
-        m_upsamplePass.shader->setUniform(m_upsamplePass.offsetLocation, float(m_offset));
+        m_upsamplePass.shader->setUniform(m_upsamplePass.offsetLocation, float(blurOffset));
 
         for (size_t i = renderInfo.framebuffers.size() - 1; i > 1; --i) {
             GLFramebuffer::popFramebuffer();
@@ -1291,7 +1302,7 @@ void BlurEffect::blur(const RenderTarget &renderTarget, const RenderViewport &vi
         m_roundedOnscreenPass.shader->setUniform(m_roundedOnscreenPass.mvpMatrixLocation, projectionMatrix);
         m_roundedOnscreenPass.shader->setUniform(m_roundedOnscreenPass.colorMatrixLocation, colorMatrix);
         m_roundedOnscreenPass.shader->setUniform(m_roundedOnscreenPass.halfpixelLocation, halfpixel);
-        m_roundedOnscreenPass.shader->setUniform(m_roundedOnscreenPass.offsetLocation, float(m_offset));
+        m_roundedOnscreenPass.shader->setUniform(m_roundedOnscreenPass.offsetLocation, float(blurOffset));
         m_roundedOnscreenPass.shader->setUniform(m_roundedOnscreenPass.boxLocation, QVector4D(nativeBox.horizontalCenter(), nativeBox.verticalCenter(), nativeBox.width() * 0.5, nativeBox.height() * 0.5));
         m_roundedOnscreenPass.shader->setUniform(m_roundedOnscreenPass.cornerRadiusLocation, nativeCornerRadius.toVector());
         m_roundedOnscreenPass.shader->setUniform(m_roundedOnscreenPass.opacityLocation, modulation);
@@ -1325,12 +1336,12 @@ void BlurEffect::blur(const RenderTarget &renderTarget, const RenderViewport &vi
         if (!m_refractionPass->setParameters(projectionMatrix,
                                              colorMatrix,
                                              halfpixel,
-                                             float(m_offset),
+                                             float(blurOffset),
                                              backgroundRect)) {
         m_onscreenPass.shader->setUniform(m_onscreenPass.mvpMatrixLocation, projectionMatrix);
         m_onscreenPass.shader->setUniform(m_onscreenPass.colorMatrixLocation, colorMatrix);
         m_onscreenPass.shader->setUniform(m_onscreenPass.halfpixelLocation, halfpixel);
-        m_onscreenPass.shader->setUniform(m_onscreenPass.offsetLocation, float(m_offset));
+        m_onscreenPass.shader->setUniform(m_onscreenPass.offsetLocation, float(blurOffset));
         } // indent intentional for KWin diff
 
         read->colorAttachment()->bind();

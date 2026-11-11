@@ -179,7 +179,7 @@ void BlurEffectConfig::save() {
                                          QStringLiteral("/Effects"),
                                          QDBusConnection::sessionBus());
 
-    interface.reconfigureEffect(QStringLiteral("better_blur_dx"));
+    interface.reconfigureEffect(QStringLiteral(BBDX_PLUGIN_ID));
 }
 
 } // namespace BBDX

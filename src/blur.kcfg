@@ -9,6 +9,10 @@
         <entry name="BlurStrength" type="Int">
             <default>15</default>
         </entry>
+        <!-- local fork: separate blur strength for docks/panels, 0 = same as BlurStrength -->
+        <entry name="DockBlurStrength" type="Int">
+            <default>0</default>
+        </entry>
         <entry name="NoiseStrength" type="Int">
             <default>5</default>
         </entry>
@@ -69,6 +73,34 @@ class3</default>
         </entry>
         <entry name="RefractionTextureRepeatMode" type="Int">
             <default>0</default>
+        </entry>
+        <!-- Glass (lens mode + lighting); no UI yet, set with kwriteconfig6 -->
+        <entry name="GlassIor" type="Int">
+            <default>150</default>
+        </entry>
+        <entry name="GlassProfile" type="Int">
+            <default>4</default>
+        </entry>
+        <entry name="RimStrength" type="Int">
+            <default>0</default>
+        </entry>
+        <entry name="RimWidth" type="Int">
+            <default>15</default>
+        </entry>
+        <entry name="RimLightAngle" type="Int">
+            <default>225</default>
+        </entry>
+        <entry name="RimDirectionality" type="Int">
+            <default>15</default>
+        </entry>
+        <entry name="RimBackStrength" type="Int">
+            <default>45</default>
+        </entry>
+        <entry name="InnerShade" type="Int">
+            <default>0</default>
+        </entry>
+        <entry name="InnerShadeRadius" type="Int">
+            <default>12</default>
         </entry>
         <!-- Performance -->
         <entry name="BlitMode" type="Enum">

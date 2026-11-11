@@ -21,7 +21,7 @@
         "Description": "Fork of the KWin Blur effect for KDE Plasma 6 with force blur and more",
         "EnabledByDefault": false,
         "License": "GPL",
-        "Name": "Better Blur DX"
+        "Name": "Better Blur DX (local build)"
     },
     "X-KDE-ConfigModule": "kwin_better_blur_dx_config"
 }

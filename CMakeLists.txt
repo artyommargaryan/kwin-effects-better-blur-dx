@@ -26,6 +26,7 @@ endif()
 
 # user build options
 option(BBDX_X11 "Build Better Blur DX for KWin X11 instead of KWin Wayland" OFF)
+set(BBDX_PLUGIN_ID "better_blur_dx_local" CACHE STRING "Plugin id (library file name) of the effect")
 option(BBDX_DEBUG "Enable extra code paths useful for debugging (Warning: major performance impact)" OFF)
 
 # deprecated build options

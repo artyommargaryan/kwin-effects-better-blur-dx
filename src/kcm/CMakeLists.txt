@@ -28,4 +28,4 @@ endif()
 # we need access to e.g. settings.hpp
 target_include_directories(kwin_better_blur_dx_config PRIVATE ..)
 
-target_compile_definitions(kwin_better_blur_dx_config PRIVATE ABOUT_VERSION_STRING="${PROJECT_VERSION}")
+target_compile_definitions(kwin_better_blur_dx_config PRIVATE ABOUT_VERSION_STRING="${PROJECT_VERSION}" BBDX_PLUGIN_ID="${BBDX_PLUGIN_ID}")
