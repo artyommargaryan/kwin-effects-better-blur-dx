@@ -1,4 +1,8 @@
 # Better Blur DX
+
+> **This is the `glass` fork** (lens refraction, rim light, dock blur, backdrop dimming). See [GLASS.md](GLASS.md) for what it adds and how to build it.
+> Upstream: https://github.com/xarblu/kwin-effects-better-blur-dx
+
 Better Blur DX is a loose continuation of [Better Blur](https://github.com/taj-ny/kwin-effects-forceblur/) - a fork of the Plasma 6 blur effect with additional features and bug fixes.
 
 ![image](https://github.com/user-attachments/assets/f8a7c618-89b4-485a-b0f8-29dd5f77e3ca)
