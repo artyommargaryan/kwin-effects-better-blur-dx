@@ -38,6 +38,7 @@ private:
     int m_modulationLocation;
     int m_boxLocation;
     int m_cornerRadiusLocation;
+    int m_edgeLineLocation;
 
     RoundedCornersPass() = default;
 

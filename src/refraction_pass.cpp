@@ -172,7 +172,10 @@ bool BBDX::RefractionPass::setParameters(const QMatrix4x4 &projectionMatrix,
     for (int i = 0; i < 4; ++i) {
         const float measured = measuredCornerRadii[i];
         float radius = static_cast<float>(cornerRadiusPixels);
-        if (measured == 0.0f) {
+        if (measured <= -2.0f) {
+            // exact radius handed over by the caller (menus cut to MenuCornerRadius)
+            radius = -measured - 2.0f;
+        } else if (measured == 0.0f) {
             radius = 0.0f;
         } else if (measured > 0.0f && m_mode == 2
                    && std::abs(measured - radius) > 0.35f * std::max(radius, 1.0f)) {

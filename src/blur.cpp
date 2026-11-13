@@ -1004,6 +1004,18 @@ void BlurEffect::blur(const RenderTarget &renderTarget, const RenderViewport &vi
             return static_cast<float>(maxScan);
         };
         glassCornerRadii = QVector4D(measure(l, t, 1.0), measure(r, t, 1.0), measure(l, b, -1.0), measure(r, b, -1.0));
+
+        // local fork: application menus are cut to a smooth rounded rectangle (MenuCornerRadius)
+        // on screen; the lens and rim then have to follow that exact radius as well.
+        const qreal menuClipRadius = m_windowManager->updateMenuClipRadius(w, glassCornerRadii, QSizeF(backgroundRect.width(), backgroundRect.height()));
+        if (menuClipRadius > 0.0) {
+            const float exact = -2.0f - static_cast<float>(menuClipRadius);
+            glassCornerRadii = QVector4D(exact, exact, exact, exact);
+            // The rounded cut does the shaping, so draw the whole bounding rectangle. The stepped
+            // shape the menu asked for is smaller than the cut in places, which left gaps in the
+            // rim line along the corners.
+            blurShape = RegionF(RectF(backgroundRect));
+        }
     }
 #endif
 

@@ -356,6 +356,8 @@ void BBDX::Window::reconfigure() {
     m_shouldForceBlur = shouldForceBlur();
 
     m_userBorderRadius = m_windowManager->userBorderRadius();
+    m_menuCornerRadius = m_windowManager->menuCornerRadius();
+    m_menuClipRadius = 0.0;
 
     slotWindowOpacityChanged(effectwindow(), 0.0, effectwindow()->opacity());
     m_windowManager->invalidateBlurCache(m_effectwindow,
@@ -521,6 +523,33 @@ KWin::BorderRadius BBDX::Window::getEffectiveBorderRadius() {
     } else {
         return KWin::BorderRadius();
     }
+}
+
+qreal BBDX::Window::updateMenuClipRadius(const QVector4D &measuredCornerRadii, const QSizeF &blurSize) {
+    qreal radius = 0.0;
+
+    // No window class filter here: with a global menu the application menus are popups of
+    // plasmashell itself. What tells a themed menu from Plasma's own popups is its shape.
+    if (m_menuCornerRadius > 0.0
+        && isMenu()
+        && !effectwindow()->isTooltip()
+        && !effectwindow()->isSpecialWindow()
+        && blurOriginIs(BlurOrigin::RequestedContent)
+        && !effectwindow()->hasDecoration()) {
+        // Menu themes round their blur shape by 8-10px, tooltips by less, Plasma popups by more.
+        // The measurement of a circular corner of radius R reads a bit above R on the corners
+        // where the shape is rasterised generously and below it on the others, so look at the
+        // largest and smallest. Small popups are left alone: the cut would eat into them.
+        const float largest = std::max({measuredCornerRadii[0], measuredCornerRadii[1], measuredCornerRadii[2], measuredCornerRadii[3]});
+        const float smallest = std::min({measuredCornerRadii[0], measuredCornerRadii[1], measuredCornerRadii[2], measuredCornerRadii[3]});
+        const qreal shortSide = std::min(blurSize.width(), blurSize.height());
+        if (largest >= 11.0f && largest <= 16.0f && smallest >= 6.0f && shortSide >= 3.5 * m_menuCornerRadius) {
+            radius = m_menuCornerRadius;
+        }
+    }
+
+    m_menuClipRadius = radius;
+    return radius;
 }
 
 qreal BBDX::Window::getEffectiveBlurOpacity(KWin::WindowPaintData &data) {

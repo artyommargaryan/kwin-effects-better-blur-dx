@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QSizeF>
+#include <QVector4D>
 #include "kwin_compat.hpp"
 
 #include <QObject>
@@ -62,6 +64,8 @@ private:
     bool m_blurMenus{false};
     bool m_blurDocks{false};
     qreal m_userBorderRadius{0.0};
+    qreal m_menuCornerRadius{0.0};
+    qreal m_menuClipRadius{0.0};
 
     // if force blurred, contains the blurred region
     std::optional<KWin::RegionF> m_forceBlurContent{};
@@ -170,6 +174,15 @@ public:
      * If the window is fullscreen/maximized the radius is always 0.
      */
     KWin::BorderRadius getEffectiveBorderRadius();
+
+    /**
+     * local fork: application menus (not Plasma's own popups) whose requested blur
+     * shape has menu sized corners get the blur cut to a smooth rounded rectangle
+     * of the configured MenuCornerRadius. Tooltips and other small-cornered popups
+     * keep their own shape. Returns the radius in use (0 = none).
+     */
+    qreal updateMenuClipRadius(const QVector4D &measuredCornerRadii, const QSizeF &blurSize);
+    qreal menuClipRadius() const { return m_menuClipRadius; }
 
     /**
      * Get effective blur opacity

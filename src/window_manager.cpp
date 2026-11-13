@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "window_manager.hpp"
 
 #include "blur.h"
@@ -154,6 +155,8 @@ void BBDX::WindowManager::reconfigure() {
     m_blurMenus = config->blurMenus();
 
     m_userBorderRadius = config->cornerRadius();
+    m_menuCornerRadius = config->menuCornerRadius();
+    m_menuEdgeLine = std::clamp(config->menuEdgeLine() / 100.0, 0.0, 1.0);
 
     for (const auto &[_, window] : m_windows) {
         window->reconfigure();
@@ -327,6 +330,22 @@ KWin::BorderRadius BBDX::WindowManager::getEffectiveBorderRadius(const KWin::Eff
         return KWin::BorderRadius();
 
     return window->getEffectiveBorderRadius();
+}
+
+qreal BBDX::WindowManager::menuClipRadius(const KWin::EffectWindow *w) const {
+    const auto window = findWindow(w);
+    if (!window)
+        return 0.0;
+
+    return window->menuClipRadius();
+}
+
+qreal BBDX::WindowManager::updateMenuClipRadius(const KWin::EffectWindow *w, const QVector4D &measuredCornerRadii, const QSizeF &blurSize) const {
+    const auto window = findWindow(w);
+    if (!window)
+        return 0.0;
+
+    return window->updateMenuClipRadius(measuredCornerRadii, blurSize);
 }
 
 qreal BBDX::WindowManager::getEffectiveBlurOpacity(const KWin::EffectWindow *w, KWin::WindowPaintData &data) const {

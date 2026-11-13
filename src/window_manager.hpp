@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QSizeF>
+#include <QVector4D>
 #include "kwin_compat.hpp"
 #include "window.hpp"
 
@@ -60,6 +62,8 @@ private:
 
     // user configured border radius
     qreal m_userBorderRadius{0.0};
+    qreal m_menuCornerRadius{0.0};
+    qreal m_menuEdgeLine{0.0};
 
     // match helpers
     bool matchesWindowClassFixed(const KWin::EffectWindow *w) const;
@@ -100,6 +104,8 @@ public:
     bool blurDocks() const { return m_blurDocks; }
     bool blurMenus() const { return m_blurMenus; }
     qreal userBorderRadius() const { return m_userBorderRadius; }
+    qreal menuCornerRadius() const { return m_menuCornerRadius; }
+    qreal menuEdgeLine() const { return m_menuEdgeLine; }
 
     /**
      * Match an EffectWindow instance in the black/white list
@@ -147,6 +153,14 @@ public:
      * or empty if unmanaged
      */
     KWin::BorderRadius getEffectiveBorderRadius(const KWin::EffectWindow *w) const;
+
+    /**
+     * local fork: radius the blur behind an application menu is cut to
+     * (0 = draw the shape the menu asked for).
+     * updateMenuClipRadius() re-evaluates it from the measured blur shape.
+     */
+    qreal menuClipRadius(const KWin::EffectWindow *w) const;
+    qreal updateMenuClipRadius(const KWin::EffectWindow *w, const QVector4D &measuredCornerRadii, const QSizeF &blurSize) const;
 
     /**
      * Get effective blur opacity for requested window

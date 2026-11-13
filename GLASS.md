@@ -20,6 +20,8 @@ For a ready-made setup (effect + matching WhiteSur theme files + light/dark swit
 | `InnerShade`, `InnerShadeRadius` | Soft inner shading |
 | `DockBlurStrength` | Blur strength for docks and panels only (0 = same as `BlurStrength`) |
 | `GlassCornerRadius`, `DockCornerRadius` | Corner radius in px for popups/windows and for docks (0 = fall back to the measured shape) |
+| `MenuCornerRadius` | Application menus (Kvantum and similar) ask for a stepped blur shape with small corners. If > 0, the glass behind them is cut to a smooth rounded rectangle of this radius; the menu theme must draw its frame with the same radius. This includes global-menu popups; tooltips and Plasma’s own larger-cornered popups are not touched. 0 = off |
+| `MenuEdgeLine` | Strength (percent) of a thin, even light line along the edge of menus cut to `MenuCornerRadius`; the directional rim leaves two corners unlit, this line runs all the way round. 0 = off |
 | `GlassLumaCeiling` | Percent; bright backdrops are rolled off to this level (100 = off) |
 
 The effect also measures each corner of a blurred surface, so square corners stay square and surfaces with a

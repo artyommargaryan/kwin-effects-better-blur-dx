@@ -43,6 +43,7 @@ std::unique_ptr<BBDX::RoundedCornersPass> BBDX::RoundedCornersPass::create() {
         pass->m_modulationLocation = pass->m_shader->uniformLocation("modulation");
         pass->m_boxLocation = pass->m_shader->uniformLocation("box");
         pass->m_cornerRadiusLocation = pass->m_shader->uniformLocation("cornerRadius");
+        pass->m_edgeLineLocation = pass->m_shader->uniformLocation("edgeLine");
     }
 
     return pass;
@@ -56,7 +57,14 @@ bool BBDX::RoundedCornersPass::drawRounded(const WindowManager *windowManager,
                                            const float modulation) const {
 
     const auto w = blurCache->paintData().window;
-    const auto cornerRadius = windowManager->getEffectiveBorderRadius(w);
+    auto cornerRadius = windowManager->getEffectiveBorderRadius(w);
+
+    // local fork: application menus are rounded along their blur shape, not the window frame
+    // (the frame of a menu includes its shadow margin)
+    const qreal menuClipRadius = cornerRadius.isNull() ? windowManager->menuClipRadius(w) : 0.0;
+    if (menuClipRadius > 0.0) {
+        cornerRadius = KWin::BorderRadius(menuClipRadius);
+    }
 
     if (cornerRadius.isNull()) {
         return false;
@@ -80,10 +88,13 @@ bool BBDX::RoundedCornersPass::drawRounded(const WindowManager *windowManager,
     };
 
 #if KWIN_VERSION < KWIN_VERSION_CODE(6, 6, 90)
-    const KWin::RectF box{KWin::snapToPixelGridF(KWin::scaledRect(transformedRect, viewport->scale())).translated(-scaledBackgroundRect->topLeft())};
+    KWin::RectF box{KWin::snapToPixelGridF(KWin::scaledRect(transformedRect, viewport->scale())).translated(-scaledBackgroundRect->topLeft())};
 #else
-    const KWin::RectF box{transformedRect.scaled(viewport->scale()).rounded().translated(-scaledBackgroundRect->topLeft())};
+    KWin::RectF box{transformedRect.scaled(viewport->scale()).rounded().translated(-scaledBackgroundRect->topLeft())};
 #endif
+    if (menuClipRadius > 0.0) {
+        box = KWin::RectF{0.0, 0.0, static_cast<qreal>(scaledBackgroundRect->width()), static_cast<qreal>(scaledBackgroundRect->height())};
+    }
 
     m_shader->setUniform(m_mvpMatrixLocation, projectionMatrix);
     m_shader->setUniform(m_modulationLocation, modulation);
@@ -93,6 +104,8 @@ bool BBDX::RoundedCornersPass::drawRounded(const WindowManager *windowManager,
     m_shader->setUniform(m_boxLocation, QVector4D(box.horizontalCenter(), box.verticalCenter(), box.width() * 0.5, box.height() * 0.5));
 #endif
     m_shader->setUniform(m_cornerRadiusLocation, cornerRadius.scaled(viewport->scale()).rounded().toVector());
+    // local fork: even light line along the edge, menus only
+    m_shader->setUniform(m_edgeLineLocation, menuClipRadius > 0.0 ? static_cast<float>(windowManager->menuEdgeLine()) : 0.0f);
 
     cacheEntry->cachedTexture()->bind();
 
