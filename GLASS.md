@@ -23,6 +23,8 @@ For a ready-made setup (effect + matching WhiteSur theme files + light/dark swit
 | `MenuCornerRadius` | Application menus (Kvantum and similar) ask for a stepped blur shape with small corners. If > 0, the glass behind them is cut to a smooth rounded rectangle of this radius; the menu theme must draw its frame with the same radius. This includes global-menu popups; tooltips and Plasma’s own larger-cornered popups are not touched. 0 = off |
 | `MenuEdgeLine` | Strength (percent) of a thin, even light line along the edge of menus cut to `MenuCornerRadius`; the directional rim leaves two corners unlit, this line runs all the way round. 0 = off |
 | `GlassLumaCeiling` | Percent; bright backdrops are rolled off to this level (100 = off) |
+| `ClearEdgeBars` | `true` leaves panels that span a whole screen edge (a top bar) without blur, lens or rim, so the wallpaper shows through unchanged; floating docks keep their glass |
+| `GlassShadeTop`, `GlassShadeBottom` | Tint gradient of popups and menus (not docks and panels): percent of darkening along the top and the bottom edge, falling off as 1 - t² (0 / 0 = off). `55 / 0` gives a popup that is dark at the top and clear at the bottom. |
 
 The effect also measures each corner of a blurred surface, so square corners stay square and surfaces with a
 clearly different radius (tooltips, menus) use their own.

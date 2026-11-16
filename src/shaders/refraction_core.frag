@@ -18,6 +18,7 @@ uniform int refractionMode; // 0: Basic, 1: Concave, 2: Glass (Snell's law)
 uniform float glassIor;                    // index of refraction, ~1.5
 uniform vec4 glassCornerMask;              // per-corner scale of the radius, 0 = square; (top-left, top-right, bottom-left, bottom-right)
 uniform float glassLumaCeiling;            // >= 1.0 disables adaptive dimming
+uniform vec2 glassShade;                   // darkening at the top (x) and bottom (y) edge, 0-1; both 0 = off
 uniform float glassProfile;                // superellipse exponent of the bezel cross-section
 uniform float glassRimStrength;            // 0 disables the rim light
 uniform float glassRimWidthPixels;
@@ -239,6 +240,15 @@ void main(void)
             float target = knee + range * (1.0 - exp(-(luma - knee) / range));
             color.rgb *= target / luma;
         }
+    }
+
+    // Tint gradient: a popup is darkest along its top edge and clears towards the bottom, so the
+    // backdrop shows through the lower part while titles and the first rows stay readable.
+    // The fall-off is 1 - t^2: about two thirds of the top value is still there half-way down.
+    if (glassShade.x > 0.0 || glassShade.y > 0.0) {
+        float t = clamp(uv.y, 0.0, 1.0); // 0 at the top edge of the window on screen
+        float shade = mix(glassShade.y, glassShade.x, 1.0 - t * t);
+        color.rgb *= 1.0 - clamp(shade, 0.0, 1.0);
     }
 
     // Lighting: a thin rim lit from glassLightDir with a weaker reflection on the

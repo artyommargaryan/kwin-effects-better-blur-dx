@@ -212,6 +212,7 @@ private:
     int m_expandSize;
     // local fork: separate strength for docks/panels
     size_t m_dockIterationCount;
+    bool m_clearEdgeBars{false};
     int m_dockOffset;
     int m_noiseStrength;
 

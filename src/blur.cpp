@@ -367,6 +367,7 @@ void BlurEffect::reconfigure(ReconfigureFlags flags)
     m_iterationCount = blurStrengthValues[blurStrength].iteration;
     m_offset = blurStrengthValues[blurStrength].offset;
     // local fork: docks/panels may use their own strength (0 = same as everything else)
+    m_clearEdgeBars = BlurConfig::clearEdgeBars();
     int dockStrength = BlurConfig::dockBlurStrength();
     dockStrength = dockStrength <= 0 ? blurStrength : std::clamp(dockStrength, 1, maxStrength) - 1;
     m_dockIterationCount = blurStrengthValues[dockStrength].iteration;
@@ -843,6 +844,15 @@ bool BlurEffect::shouldBlur(const EffectWindow *w, int mask, const WindowPaintDa
 
     if (w->isDesktop()) {
         return false;
+    }
+
+    // local fork: a panel as long as its screen edge is a bar, not a dock
+    if (m_clearEdgeBars && w->isDock() && w->screen()) {
+        const auto screen = w->screen()->geometry();
+        const auto frame = w->frameGeometry();
+        if (frame.width() >= screen.width() - 2 || frame.height() >= screen.height() - 2) {
+            return false;
+        }
     }
 
     bool scaled = !qFuzzyCompare(data.xScale(), 1.0) && !qFuzzyCompare(data.yScale(), 1.0);

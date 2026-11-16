@@ -53,6 +53,7 @@ std::unique_ptr<BBDX::RefractionPass> BBDX::RefractionPass::create() {
         pass->m_glassRimStrengthLocation = pass->m_shader->uniformLocation("glassRimStrength");
         pass->m_glassCornerMaskLocation = pass->m_shader->uniformLocation("glassCornerMask");
         pass->m_glassLumaCeilingLocation = pass->m_shader->uniformLocation("glassLumaCeiling");
+        pass->m_glassShadeLocation = pass->m_shader->uniformLocation("glassShade");
         pass->m_glassRimWidthPixelsLocation = pass->m_shader->uniformLocation("glassRimWidthPixels");
         pass->m_glassLightDirLocation = pass->m_shader->uniformLocation("glassLightDir");
         pass->m_glassRimDirectionalityLocation = pass->m_shader->uniformLocation("glassRimDirectionality");
@@ -87,6 +88,8 @@ void BBDX::RefractionPass::reconfigure() {
     const double snapped{std::round(static_cast<double>(config->refractionCornerRadius()) / stepSize) * stepSize};
     m_cornerRadiusPixels = snapped;
     m_glassLumaCeiling = std::clamp(static_cast<double>(config->glassLumaCeiling()) / 100.0, 0.05, 1.0);
+    m_glassShadeTop = std::clamp(static_cast<double>(config->glassShadeTop()) / 100.0, 0.0, 1.0);
+    m_glassShadeBottom = std::clamp(static_cast<double>(config->glassShadeBottom()) / 100.0, 0.0, 1.0);
     m_glassCornerRadiusPixels = static_cast<double>(config->glassCornerRadius());
     m_dockCornerRadiusPixels = static_cast<double>(config->dockCornerRadius());
 
@@ -191,6 +194,9 @@ bool BBDX::RefractionPass::setParameters(const QMatrix4x4 &projectionMatrix,
     m_shader->setUniform(m_refractionCornerRadiusPixelsLocation, largest);
     m_shader->setUniform(m_glassCornerMaskLocation, cornerScale);
     m_shader->setUniform(m_glassLumaCeilingLocation, static_cast<float>(m_glassLumaCeiling));
+    // docks and panels are thin strips: a top-to-bottom gradient would only make them look uneven
+    m_shader->setUniform(m_glassShadeLocation, isDock ? QVector2D(0.0f, 0.0f)
+                                                      : QVector2D(static_cast<float>(m_glassShadeTop), static_cast<float>(m_glassShadeBottom)));
     m_shader->setUniform(m_refractionStrengthLocation, static_cast<float>(m_strength));
     m_shader->setUniform(m_refractionNormalPowLocation, static_cast<float>(m_normalPow));
     m_shader->setUniform(m_refractionRGBFringingLocation, static_cast<float>(m_RGBFringing));
